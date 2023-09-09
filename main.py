@@ -1,20 +1,32 @@
-from time import sleep
+import time
 import util
-import WifiManager
+from WifiManager import WifiManager
 import ServerManager
+import network
+
+import medicoes
+import json
+#import ntptime
+#ntptime.settime()
 
 print(util.df())
 print(util.free(True))
 util.connectSDCard()
 
-WifiManager.init()
+
+wm = WifiManager(ssid="Horta",password="Fatec123")
+wm.connect()
 
 ServerManager.init()
 
 n = 0
 while True:
-    #Looop de medições, automações e agendamentos
-    print(n)
-    n = n + 1
-    sleep(3)
-    
+  time.sleep(100)
+  medidas = json.dumps(medicoes.getLeituras())
+  f = open("/sd/readings.json",'+a')
+  f.write(",")
+  f.write(medidas)
+  f.flush()
+  f.close()
+
+

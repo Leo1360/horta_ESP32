@@ -9,11 +9,14 @@ def listarSensores():
 def addSensor(nome,pinos,tipo):
     if(sensorFunctions.get(tipo)==None):
         return False
+    for sensor in sensores:
+        if(sensor["nome"] == None):
+            return False
     sensores.append({"nome":nome,"pinos":pinos,"tipo":tipo})
     return True
 
 def removeSensor(nome):
-    for sensor,i in sensores:
+    for sensor in sensores:
         if(sensor["nome"] == nome):
             sensores.remove(sensor)
             return

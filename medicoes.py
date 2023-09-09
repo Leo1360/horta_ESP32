@@ -22,7 +22,11 @@ def removeSensor(nome):
 def getLeituras():
     medicoes = []
     for sensor in sensores:
-        medicoes.append(sensorFunctions[sensor["tipo"]](sensor))
+        try:
+            medicoes.append(sensorFunctions[sensor["tipo"]](sensor))
+        except:
+            medicoes.append({"nome":sensor["nome"]})
+        
     return {"hora":0,"medicoes":medicoes}
 
 def rdht11(cfg):

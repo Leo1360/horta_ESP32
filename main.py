@@ -13,6 +13,7 @@ print(util.df())
 print(util.free(True))
 util.connectSDCard()
 
+network.hostname("horta")
 
 wm = WifiManager(ssid="Horta",password="Fatec123")
 wm.connect()

@@ -3,6 +3,8 @@ import medicoes
 from micropyserver import MicroPyServer
 import _thread
 
+serverLock = ""
+
 def readNow(request):
     print("/readNow")
     server.send("HTTP/1.0 200\r\n")
@@ -29,12 +31,15 @@ def listSensores(request):
 
 def readsHistory(request):
   print("/readsHistory")  
-  f = open("medicoes.json","r")
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: aplication/json\r\n\r\n")
-  server.send(f.read())
-
-
+  with serverLock:
+    with open("/sd/leituras.json","r") as f:
+      for line in f:
+        server.send(line)
+  server.send("\n]")
+  pass
+  
 def setHandlers():
   server.add_route("/readNow", readNow)
   server.add_route("/addSensor", addSensor,method="POST")
@@ -42,9 +47,11 @@ def setHandlers():
   server.add_route("/readsHistory",readsHistory)
 
 def init():
+    global serverLock 
+    serverLock = _thread.allocate_lock()
     _thread.start_new_thread(server.start,[])
+    return serverLock
 
-print("Jabuticaba")
 server = MicroPyServer()
 setHandlers()
 

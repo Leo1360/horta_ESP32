@@ -1,5 +1,6 @@
 import json
 import machine
+from easydate import DateTime
 
 sensores = []
 
@@ -24,13 +25,13 @@ def removeSensor(nome):
 
 def getLeituras():
     medicoes = []
+    hora = str(DateTime.now())
     for sensor in sensores:
         try:
             medicoes.append(sensorFunctions[sensor["tipo"]](sensor))
         except:
             medicoes.append({"nome":sensor["nome"]})
-        
-    return {"hora":0,"medicoes":medicoes}
+    return {"dataHora":hora,"medicoes":medicoes}
 
 def rdht11(cfg):
     from dht import DHT11

@@ -32,7 +32,7 @@ class WifiManager:
         
         # The file were the credentials will be stored.
         # There is no encryption, it's just a plain text archive. Be aware of this security problem!
-        self.wifi_credentials = 'wifi.dat'
+        self.wifi_credentials = '/sd/wifi.dat'
         
         # Prevents the device from automatically trying to connect to the last saved network without first going through the steps defined in the code.
         self.wlan_sta.disconnect()

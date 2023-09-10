@@ -4,11 +4,6 @@ from WifiManager import WifiManager
 import ServerManager
 import network
 
-import medicoes
-import json
-#import ntptime
-#ntptime.settime()
-
 print(util.df())
 print(util.free(True))
 util.connectSDCard()
@@ -18,16 +13,24 @@ network.hostname("horta")
 wm = WifiManager(ssid="Horta",password="Fatec123")
 wm.connect()
 
-ServerManager.init()
+lock = ServerManager.init()
 
-n = 0
+import ntptime
+ntptime.settime()
+
+
+def leitura():
+  print("Leitura Programada")  
+  import medicoes
+  import json
+  jsonMedidas = json.dumps(medicoes.getLeituras())
+  with lock:
+    with open('/sd/leituras.json','a+') as f:
+        f.write("\n")
+        f.write(jsonMedidas)
+        f.write(",")
+  pass
+     
 while True:
-  time.sleep(100)
-  medidas = json.dumps(medicoes.getLeituras())
-  f = open("/sd/readings.json",'+a')
-  f.write(",")
-  f.write(medidas)
-  f.flush()
-  f.close()
-
-
+  leitura()
+  time.sleep(300)

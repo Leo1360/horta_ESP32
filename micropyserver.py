@@ -1,154 +1,49 @@
-"""
-MicroPyServer is a simple HTTP server for MicroPython projects.
-
-@see https://github.com/troublegum/micropyserver
-
-The MIT License
-
-Copyright (c) 2019 troublegum. https://github.com/troublegum/micropyserver
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-"""
-import re
-import socket
-import sys
-import io
-
-
-class MicroPyServer(object):
-
-    def __init__(self, host="0.0.0.0", port=80):
-        """ Constructor """
-        self._host = host
-        self._port = port
-        self._routes = []
-        self._connect = None
-        self._on_request_handler = None
-        self._on_not_found_handler = None
-        self._on_error_handler = None
-        self._sock = None
-
-    def start(self):
-        """ Start server """
-        self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self._sock.bind((self._host, self._port))
-        self._sock.listen(1)
-        print("Server start")
-        while True:
-            if self._sock is None:
-                break
-            try:
-                self._connect, address = self._sock.accept()
-                request = self.get_request()
-                if len(request) == 0:
-                    self._connect.close()
-                    continue
-                if self._on_request_handler:
-                    if not self._on_request_handler(request, address):
-                        continue
-                route = self.find_route(request)
-                if route:
-                    route["handler"](request)
-                else:
-                    self._route_not_found(request)
-            except Exception as e:
-                self._internal_error(e)
-            finally:
-                self._connect.close()
-
-    def stop(self):
-        """ Stop the server """
-        self._connect.close()
-        self._sock.close()
-        self._sock = None
-        print("Server stop")
-
-    def add_route(self, path, handler, method="GET"):
-        """ Add new route  """
-        self._routes.append(
-            {"path": path, "handler": handler, "method": method})
-
-    def send(self, data):
-        """ Send data to client """
-        if self._connect is None:
-            raise Exception("Can't send response, no connection instance")
-        self._connect.sendall(data.encode())
-
-    def find_route(self, request):
-        """ Find route """
-        lines = request.split("\r\n")
-        method = re.search("^([A-Z]+)", lines[0]).group(1)
-        path = re.search("^[A-Z]+\\s+(/[-a-zA-Z0-9_.]*)", lines[0]).group(1)
-        for route in self._routes:
-            if method != route["method"]:
-                continue
-            if path == route["path"]:
-                return route
-            else:
-                match = re.search("^" + route["path"] + "$", path)
-                if match:
-                    print(method, path, route["path"])
-                    return route
-
-    def get_request(self, buffer_length=4096):
-        """ Return request body """
-        return str(self._connect.recv(buffer_length), "utf8")
-
-    def on_request(self, handler):
-        """ Set request handler """
-        self._on_request_handler = handler
-
-    def on_not_found(self, handler):
-        """ Set not found handler """
-        self._on_not_found_handler = handler
-
-    def on_error(self, handler):
-        """ Set error handler """
-        self._on_error_handler = handler
-
-    def _route_not_found(self, request):
-        """ Route not found handler """
-        if self._on_not_found_handler:
-            self._on_not_found_handler(request)
-        else:
-            """ Default not found handler """
-            self.send("HTTP/1.0 404 Not Found\r\n")
-            self.send("Content-Type: text/plain\r\n\r\n")
-            self.send("Not found")
-
-    def _internal_error(self, error):
-        """ Internal error handler """
-        if self._on_error_handler:
-            self._on_error_handler(error)
-        else:
-            """ Default internal error handler """
-            if "print_exception" in dir(sys):
-                output = io.StringIO()
-                sys.print_exception(error, output)
-                str_error = output.getvalue()
-                output.close()
-            else:
-                str_error = str(error)
-            self.send("HTTP/1.0 500 Internal Server Error\r\n")
-            self.send("Content-Type: text/plain\r\n\r\n")
-            self.send("Error: " + str_error)
-            print(str_error)
-
-
+_E='Content-Type: text/plain\r\n\r\n'
+_D='method'
+_C='handler'
+_B='path'
+_A=None
+import re,socket,sys,io
+class MicroPyServer:
+	def __init__(A,host='0.0.0.0',port=80):A._host=host;A._port=port;A._routes=[];A._connect=_A;A._on_request_handler=_A;A._on_not_found_handler=_A;A._on_error_handler=_A;A._sock=_A
+	def start(A):
+		A._sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM);A._sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1);A._sock.bind((A._host,A._port));A._sock.listen(1);print('Server start')
+		while True:
+			if A._sock is _A:break
+			try:
+				A._connect,D=A._sock.accept();B=A.get_request()
+				if len(B)==0:A._connect.close();continue
+				if A._on_request_handler:
+					if not A._on_request_handler(B,D):continue
+				C=A.find_route(B)
+				if C:C[_C](B)
+				else:A._route_not_found(B)
+			except Exception as E:A._internal_error(E)
+			finally:A._connect.close()
+	def stop(A):A._connect.close();A._sock.close();A._sock=_A;print('Server stop')
+	def add_route(A,path,handler,method='GET'):A._routes.append({_B:path,_C:handler,_D:method})
+	def send(A,data):
+		if A._connect is _A:raise Exception("Can't send response, no connection instance")
+		A._connect.sendall(data.encode())
+	def find_route(E,request):
+		C=request.split('\r\n');D=re.search('^([A-Z]+)',C[0]).group(1);B=re.search('^[A-Z]+\\s+(/[-a-zA-Z0-9_.]*)',C[0]).group(1)
+		for A in E._routes:
+			if D!=A[_D]:continue
+			if B==A[_B]:return A
+			else:
+				F=re.search('^'+A[_B]+'$',B)
+				if F:print(D,B,A[_B]);return A
+	def get_request(A,buffer_length=4096):return str(A._connect.recv(buffer_length),'utf8')
+	def on_request(A,handler):A._on_request_handler=handler
+	def on_not_found(A,handler):A._on_not_found_handler=handler
+	def on_error(A,handler):A._on_error_handler=handler
+	def _route_not_found(A,request):
+		if A._on_not_found_handler:A._on_not_found_handler(request)
+		else:A.send('HTTP/1.0 404 Not Found\r\n');A.send(_E);A.send('Not found')
+	def _internal_error(A,error):
+		B=error
+		if A._on_error_handler:A._on_error_handler(B)
+		else:
+			if'print_exception'in dir(sys):C=io.StringIO();sys.print_exception(B,C);D=C.getvalue();C.close()
+			else:D=str(B)
+			A.send('HTTP/1.0 500 Internal Server Error\r\n');A.send(_E);A.send('Error: '+D);print(D)

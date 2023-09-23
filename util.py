@@ -21,3 +21,10 @@ def free(full=False):
   P = '{0:.2f}%'.format(F/T*100)
   if not full: return P
   else : return ('Total:{0} \n Free:{1} ({2})'.format(T,F,P))
+
+def atualizarTempo():
+  import ntptime
+  try:
+    ntptime.settime()
+  except:
+    pass

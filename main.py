@@ -15,9 +15,7 @@ wm.connect()
 
 lock = ServerManager.init()
 
-import ntptime
-ntptime.settime()
-
+util.atualizarTempo()
 
 def leitura():
   print("Leitura Programada")  
@@ -30,7 +28,8 @@ def leitura():
         f.write(jsonMedidas)
         f.write(",")
   pass
-     
+
 while True:
+  wm.connect()
   leitura()
   time.sleep(300)

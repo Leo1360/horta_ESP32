@@ -14,7 +14,7 @@ def readNow(request):
 def addSensor(request):
   print("/addSensor")
   infos = json.loads(request.split("\r\n\r\n")[1])
-  ret = medicoes.addSensor(infos["nome"],infos["pinos"],infos["tipo"])
+  ret = medicoes.addSensor(infos["nome"],infos["pinos"],infos["tipo"],infos["faixas"])
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: aplication/json\r\n\r\n")
   if(ret == True):

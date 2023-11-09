@@ -1,6 +1,7 @@
 import machine
 from sdcard import SDCard
 import os
+import json
 import gc
 
 def connectSDCard():
@@ -28,3 +29,13 @@ def atualizarTempo():
     ntptime.settime()
   except:
     pass
+
+def getConfiguration(configName):
+  print("getConfiguration() configName: " + configName)
+  with open("config.json","r") as f:
+    configs = f.read()
+    print(configs)  
+    configuracoes = json.loads(configs)
+    print("Pegando configuração " + configName + ":= " + configuracoes[configName])
+    return configuracoes[configName]
+  

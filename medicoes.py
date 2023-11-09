@@ -4,12 +4,56 @@ from time import sleep
 from easydate import DateTime
 
 
+# {
+#     "nome":"nome",
+#     "tipo":"DHT11",
+#     "pinos":[1],
+#     "faixas":{
+#       "umi":{"max":100,"min":50},
+#       "temp":{"max":35,"min":15}
+#     }
+# }
+
+def validarLeitura(sensor,values):
+    print("validarLeitura(): sensor= ")
+    print(sensor)
+    print(values)
+    config = sensor["faixas"]
+    print("validarLeitura(): config= ")
+    print(config)
+    for key in values:
+        valor = values[key]
+        print("validarLeitura(): verificando " + key)
+        if (config[key]["max"]<valor or config[key]["min"]>valor):
+            print("validarLeitura(): Sending notification")
+            sendNotification(sensor,valor)
+    pass
+
+
+def sendNotification(sensor,valor):
+    print("sendNotification() ")
+    print(sensor)
+    token = util.getConfiguration("TELEGRAM_TOKEN")
+    chat = util.getConfiguration("TELEGRAM_CHAT")
+    import utelegram
+    print("sendNotification() definindo menssagem")
+    msg = "Foi verificado um valor fora da faixa no sensor '" + sensor["nome"] + "' - valor= " + valor
+    print(msg)
+    print("A")
+    utelegram.sendMsg(token,chat,msg)
+    pass
+
+
 def init():
     global sensores
+    sensores = []
     with open("/sd/sensores.json","r") as f:
         temp = f.readline()
         print(temp)
-        sensores = json.loads(temp)
+        try:
+            sensores = json.loads(temp)
+        except:
+            pass
     pass
 
 def atualizarArquivoSensores():
@@ -20,12 +64,12 @@ def atualizarArquivoSensores():
 def listarSensores():
     return json.dumps(sensores)
 
-def addSensor(nome,pinos,tipo):
+def addSensor(nome,pinos,tipo,faixas):
     if(sensorFunctions.get(tipo)==None):
         return "necessário informar o nome do sensor"
     if(getSensorByName(nome) != None):
         return "Ja existe um sensor com o mesmo nome"
-    sensores.append({"nome":nome,"pinos":pinos,"tipo":tipo})
+    sensores.append({"nome":nome,"pinos":pinos,"tipo":tipo,"faixas":faixas})
     atualizarArquivoSensores()
     return True
 
@@ -47,7 +91,13 @@ def getLeituras():
     hora = str(DateTime.now())
     for sensor in sensores:
         try:
-            medicoes.append(sensorFunctions[sensor["tipo"]](sensor))
+            print("1")
+            leitura = sensorFunctions[sensor["tipo"]](sensor)
+            print("2")
+            medicoes.append(leitura)
+            print("3")
+            validarLeitura(sensor,leitura)
+            print("4")
         except:
             medicoes.append({"nome":sensor["nome"]})
     return {"dataHora":hora,"medicoes":medicoes}

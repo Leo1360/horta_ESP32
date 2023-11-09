@@ -1,6 +1,7 @@
 import machine
 from sdcard import SDCard
 import os
+import json
 import gc
 
 def connectSDCard():
@@ -21,3 +22,20 @@ def free(full=False):
   P = '{0:.2f}%'.format(F/T*100)
   if not full: return P
   else : return ('Total:{0} \n Free:{1} ({2})'.format(T,F,P))
+
+def atualizarTempo():
+  import ntptime
+  try:
+    ntptime.settime()
+  except:
+    pass
+
+def getConfiguration(configName):
+  print("getConfiguration() configName: " + configName)
+  with open("config.json","r") as f:
+    configs = f.read()
+    print(configs)  
+    configuracoes = json.loads(configs)
+    print("Pegando configuração " + configName + ":= " + configuracoes[configName])
+    return configuracoes[configName]
+  

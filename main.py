@@ -3,6 +3,7 @@ import util
 from WifiManager import WifiManager
 import ServerManager
 import network
+import medicoes
 
 print(util.df())
 print(util.free(True))
@@ -15,13 +16,15 @@ wm.connect()
 
 lock = ServerManager.init()
 
-import ntptime
-ntptime.settime()
+util.atualizarTempo()
 
+import utelegram
+
+with lock:
+    utelegram.sendMsg("6742344655:AAGnLnHFrSJhmCdIDx9RBIe96PSejxXOlwI",-4099373084,"Teste notificação esp")
 
 def leitura():
   print("Leitura Programada")  
-  import medicoes
   import json
   jsonMedidas = json.dumps(medicoes.getLeituras())
   with lock:
@@ -30,7 +33,11 @@ def leitura():
         f.write(jsonMedidas)
         f.write(",")
   pass
-     
+
+medicoes.init()
+
 while True:
-  leitura()
+  with lock:
+      wm.connect()
+      leitura()
   time.sleep(300)

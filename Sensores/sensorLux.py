@@ -1,6 +1,6 @@
 def read(pinos,faixas):
     from machine import I2C
-    from bh1750 import BH1750
+    from Sensores.bh1750 import BH1750
 
     i2c0_scl = pinos[0]
     i2c0_sda = pinos[1]

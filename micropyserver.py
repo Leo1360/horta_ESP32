@@ -9,6 +9,7 @@ _B='path'
 _A=_G
 HTTP_CODES={100:'Continue',101:'Switching protocols',102:'Processing',200:'Ok',201:'Created',202:'Accepted',203:'Non authoritative information',204:'No content',205:'Reset content',206:'Partial content',207:'Multi status',208:'Already reported',226:'Im used',300:'Multiple choices',301:'Moved permanently',302:'Found',303:'See other',304:'Not modified',305:'Use proxy',307:'Temporary redirect',308:'Permanent redirect',400:'Bad request',401:'Unauthorized',402:'Payment required',403:'Forbidden',404:_I,405:'Method not allowed',406:'Not acceptable',407:'Proxy authentication required',408:'Request timeout',409:'Conflict',410:'Gone',411:'Length required',412:'Precondition failed',413:'Request entity too large',414:'Request uri too long',415:'Unsupported media type',416:'Request range not satisfiable',417:'Expectation failed',418:'I am a teapot',422:'Unprocessable entity',423:'Locked',424:'Failed dependency',426:'Upgrade required',428:'Precondition required',429:'Too many requests',431:'Request header fields too large',500:'Internal server error',501:'Not implemented',502:'Bad gateway',503:'Service unavailable',504:'Gateway timeout',505:'Http version not supported',506:'Variant also negotiates',507:'Insufficient storage',508:'Loop detected',510:'Not extended',511:'Network authentication required'}
 import re,socket,sys,io
+from time import sleep
 #from typing import Self
 class MicroPyServer:
 	def __init__(A,host='0.0.0.0',port=80):A._host=host;A._port=port;A._routes=[];A._connect=_A;A._on_request_handler=_A;A._on_not_found_handler=_A;A._on_error_handler=_A;A._sock=_A
@@ -26,6 +27,7 @@ class MicroPyServer:
 				else:A._route_not_found(B)
 			except Exception as E:A._internal_error(E)
 			finally:A._connect.close()
+			sleep(0.3)
 	def stop(A):A._connect.close();A._sock.close();A._sock=_A;print('Server stop')
 	def add_route(A,path,handler,method='GET'):A._routes.append({_B:path,_C:handler,_D:method})
 	def send(A,data):

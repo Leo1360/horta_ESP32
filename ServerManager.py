@@ -2,19 +2,20 @@ import json
 import medicoes
 from micropyserver import MicroPyServer
 import _thread
-
+from time import localtime
 serverLock = ""
 
 def readNow(request):
     print("/readNow")
     server.send("HTTP/1.0 200\r\n")
     server.send("Content-Type: aplication/json\r\n\r\n")
-    server.send(json.dumps(medicoes.getLeituras()))
+    server.send(json.dumps(medicoes.getReadings()))
 
 def addSensor(request):
+  from Sensores.SensorManager import addSensor
   print("/addSensor")
   infos = json.loads(request.split("\r\n\r\n")[1])
-  ret = medicoes.addSensor(infos["nome"],infos["pinos"],infos["tipo"],infos["faixas"])
+  ret = addSensor(infos)
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: aplication/json\r\n\r\n")
   if(ret == True):
@@ -23,8 +24,9 @@ def addSensor(request):
     server.send("""{"status":"Fail","msg":" """ + ret + """ "}""")
 
 def listSensores(request):
+  from Sensores.SensorManager import loadSensorRegistry
   print("/listSensores")
-  temp = medicoes.listarSensores()
+  temp = json.dumps(loadSensorRegistry())
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: aplication/json\r\n\r\n")
   server.send(temp)
@@ -33,17 +35,12 @@ def readsHistory(request):
   print("/readsHistory")  
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: aplication/json\r\n\r\n")
-  with serverLock:
-    with open("/sd/leituras.json","r") as f:
-      for line in f:
-        server.send(line)
+  medicoes.streamHistoryToServer(server)
   server.send("\n]")
   pass
   
 def limparLeituras(request):
-  with serverLock:
-    with open("/sd/leituras.json","w") as f:
-      f.write("[")
+  medicoes.clearHistoryFile()
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: aplication/json\r\n\r\n")
   server.send("""{"status":"OK"}""")
@@ -61,26 +58,24 @@ def updateTime(request):
   else:
     from machine import RTC
     RTC().datetime([data["Y"],data["M"],data["D"],data["h"],data["m"]])
+  try:
+    msg = localtime()
+  except:
+    pass
   server.send_response("""{"status":" """ + resp + """ ","msg":" """ + msg + """ "}""",content_type="aplication/json")
   pass
 
-def setHandlers():
+def init():
   server.add_route("/readNow", readNow)
   server.add_route("/addSensor", addSensor,method="POST")
   server.add_route("/listSensores",listSensores)
   server.add_route("/readsHistory",readsHistory)
   server.add_route("/limparHistorico",limparLeituras)
   server.add_route("/updateTime",updateTime)
-
-
-def init():
-    global serverLock 
-    serverLock = _thread.allocate_lock()
-    _thread.start_new_thread(server.start,[])
-    return serverLock
+  _thread.start_new_thread(server.start,[])
 
 server = MicroPyServer()
-setHandlers()
+
 
 
 

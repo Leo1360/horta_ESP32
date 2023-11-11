@@ -6,13 +6,15 @@ import gc
 
 def loadSensorRegistry():
     import json
-    sensores = []
+    sensores = {}
     with open("/sd/sensores.json","r") as f:
-        temp = f.readline()
-        print(temp)
+        temp = f.read()
         try:
             sensores = json.loads(temp)
+            print("Registry loaded")
+            print(sensores)
         except:
+            print("Json to dict conversion failed")
             sensores = None
     return sensores
 
@@ -49,11 +51,15 @@ def getpin(port):
 def readAllSensor():
     readings = []
     sensores = loadSensorRegistry()
+    if(len(sensores)==0):
+        return {}
     for key in sensores:
         mod = None
+        print("Reading sensor: " + sensores[key])
         try:
-            __import__(sensores[key]["tipo"])
+            __import__("Sensores."+sensores[key]["tipo"])
         except:
+            print("Sensor driver nor found")
             continue
         read, notify = {key : mod.read(getpin(sensores[key]["port"]),sensores[key]["faixas"])}
         if(notify):

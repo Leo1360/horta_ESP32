@@ -1,4 +1,4 @@
-# hum - humidade
+# umd - humidade
 # tmp - temperatura
 # ecs - eletrocondutividade de solo
 # lux - luminosidade
@@ -15,7 +15,8 @@ def loadSensorRegistry():
             print(sensores)
         except:
             print("Json to dict conversion failed")
-            sensores = None
+            sensores = {}
+        print(sensores)
     return sensores
 
 def updateSensorRegistry(sensores):
@@ -42,7 +43,7 @@ ports = {
 
 def getpin(port):
     from machine import Pin
-    temp = ports[port]
+    temp = ports[str(port)]
     out = []
     for pino in temp:
         out.append(Pin(pino))
@@ -51,20 +52,27 @@ def getpin(port):
 def readAllSensor():
     readings = []
     sensores = loadSensorRegistry()
-    if(len(sensores)==0):
+    if(sensores == {}):
+        print("No Sensor registerd")
         return {}
     for key in sensores:
         mod = None
-        print("Reading sensor: " + sensores[key])
+        print("Reading sensor: ")
+        print(sensores[key]["tipo"])
+        modName = sensores[key]["tipo"]
+        print(modName)
         try:
-            __import__("Sensores."+sensores[key]["tipo"])
+            mod = __import__(modName)
+            print("Sensor driver loaded")
         except:
             print("Sensor driver nor found")
             continue
-        read, notify = {key : mod.read(getpin(sensores[key]["port"]),sensores[key]["faixas"])}
+        print(mod)
+        read, notify = mod.read(getpin(sensores[key]["port"]),sensores[key]["faixas"])
+        read = {key:read}
         if(notify):
-            import Notification
-            Notification.sendNotification(sensores[key],read)
+            from Sensores.Notification import sendNotification
+            sendNotification(sensores[key],read,key)
         readings.append(read)
         del mod
         gc.collect()

@@ -37,5 +37,5 @@ def getConfiguration(configName):
     configs = f.read()
     print(configs)  
     configuracoes = json.loads(configs)
-    print("Pegando configuração " + configName + ":= " + configuracoes[configName])
+    print("Pegando configuração " + configName + ":= " + str(configuracoes[configName]))
     return configuracoes[configName]

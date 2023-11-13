@@ -71,7 +71,7 @@ def readAllSensor():
         read, notify = mod.read(getpin(sensores[key]["port"]),sensores[key]["faixas"])
         read = {key:read}
         if(notify):
-            from Sensores.Notification import sendNotification
+            from Notification import sendNotification
             sendNotification(sensores[key],read,key)
         readings.append(read)
         del mod

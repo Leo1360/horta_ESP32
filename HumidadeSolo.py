@@ -12,7 +12,7 @@ def read(pinos,faixas):
     amostras = filtroDesvPad(amostras,1)
     umidade = 100 - ((mediaArray(amostras)-1024) * 0.05537)
     read = {"umd":umidade}
-    import Notification
-    notify = Notification.validarLeitura(faixas,read)
+    from Notification import validarLeitura
+    notify = validarLeitura(faixas,read)
 
     return read, notify

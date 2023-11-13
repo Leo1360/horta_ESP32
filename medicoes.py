@@ -7,7 +7,7 @@ def init():
     lock = _thread.allocate_lock() # lock para leitura do arquivo de histórico de leituras
 
 def getReadings():
-    from Sensores.SensorManager import readAllSensor
+    from SensorManager import readAllSensor
     medicoes = readAllSensor()
     hora = str(DateTime.now())
     return {"dataHora":hora,"medicoes":medicoes}

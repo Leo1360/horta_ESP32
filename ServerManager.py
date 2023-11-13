@@ -12,7 +12,7 @@ def readNow(request):
     server.send(json.dumps(medicoes.getReadings()))
 
 def addSensor(request):
-  from Sensores.SensorManager import addSensor
+  from SensorManager import addSensor
   print("/addSensor")
   infos = json.loads(request.split("\r\n\r\n")[1])
   ret = addSensor(infos)
@@ -24,7 +24,7 @@ def addSensor(request):
     server.send("""{"status":"Fail","msg":" """ + ret + """ "}""")
 
 def listSensores(request):
-  from Sensores.SensorManager import loadSensorRegistry
+  from SensorManager import loadSensorRegistry
   print("/listSensores")
   temp = json.dumps(loadSensorRegistry())
   server.send("HTTP/1.0 200\r\n")

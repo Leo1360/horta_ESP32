@@ -1,43 +1,29 @@
-import time
+from time import sleep
 import util
 from WifiManager import WifiManager
 import ServerManager
-import network
+from network import hostname
 import medicoes
 
-print(util.df())
-print(util.free(True))
-util.connectSDCard()
+def setup():
+  print("Disk usage: " + util.df())
+  print("Ram usage: " + util.free(True))
+  util.connectSDCard()
+  hostname("horta")
+  global wm
+  wm = WifiManager(ssid="Horta",password="Fatec123")
+  wm.connect()
+  ServerManager.init()
+  util.atualizarTempo()
+  medicoes.init()
 
-network.hostname("horta")
+def loop():
+  print("Ram usage: " + util.free())
+  medicoes.persistReadings(medicoes.getReadings())
+  wm.connect()
+  sleep(5)
 
-wm = WifiManager(ssid="Horta",password="Fatec123")
-wm.connect()
-
-lock = ServerManager.init()
-
-util.atualizarTempo()
-
-import utelegram
-
-with lock:
-    utelegram.sendMsg("6742344655:AAGnLnHFrSJhmCdIDx9RBIe96PSejxXOlwI",-4099373084,"Teste notificação esp")
-
-def leitura():
-  print("Leitura Programada")  
-  import json
-  jsonMedidas = json.dumps(medicoes.getLeituras())
-  with lock:
-    with open('/sd/leituras.json','a+') as f:
-        f.write("\n")
-        f.write(jsonMedidas)
-        f.write(",")
-  pass
-
-medicoes.init()
-
+#----------
+setup()
 while True:
-  with lock:
-      wm.connect()
-      leitura()
-  time.sleep(300)
+  loop

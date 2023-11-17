@@ -1,0 +1,10 @@
+{
+    "xyz":{
+        "tipo":"DHT11",
+        "port":"2",
+        "faixas":{
+            "hum":{"max":100,"min":50},
+            "tmp":{"max":35,"min":15}
+        }
+    }
+}

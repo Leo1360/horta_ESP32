@@ -21,9 +21,9 @@ def loop():
   print("Ram usage: " + util.free())
   medicoes.persistReadings(medicoes.getReadings())
   wm.connect()
-  sleep(5)
+  sleep(300)
 
 #----------
 setup()
 while True:
-  loop
+  loop()

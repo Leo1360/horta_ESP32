@@ -25,8 +25,8 @@ def validarLeitura(faixas,values):
         print("validarLeitura(): verificando " + key)
         if (faixas[key]["max"]<valor or faixas[key]["min"]>valor):
             print("Fora da faixa")
-            return False
-    return True
+            return True
+    return False
 
 
 def sendNotification(sensor,valor,nome):

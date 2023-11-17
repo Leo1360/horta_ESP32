@@ -1,0 +1,127 @@
+{
+  "uuid": "e170139f119015dc674ab98ad21902b7",
+  "path": "Offline/plataforma%20sensores",
+  "name": "plataforma sensores",
+  "content": "",
+  "created_at": "2023-09-05 19:15:34",
+  "updated_at": "2023-11-17 13:05:06",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "3a2e8efdd4defbae293339d7639936ba",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "5c8f2a5fac4843c79ffdc177d62f27ad": 1,
+        "eaa76950fd7343a1953943ee7b9978d3": 11,
+        "2f5c8276f8d64010877a8d3bb97697b8": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "ESP32-DEVKIT-V1-30PIN",
+          1,
+          "ESP32-DEVKITV1_ESP32-DEVKITV1",
+          "1",
+          {
+            "Contributor": "KiraKira san",
+            "spiceSymbolName": "ESP32-DEVKIT-V1-30PIN",
+            "Supplier": "",
+            "Supplier Part": "",
+            "Manufacturer Part": "",
+            "puuid": "fed5720f683e4a9294f3fca4b45ca860",
+            "uuid": "5c8f2a5fac4843c79ffdc177d62f27ad"
+          }
+        ],
+        [
+          "CARTAO_SD",
+          1,
+          "HDR-F-2.54_1X6",
+          "C1",
+          {
+            "Supplier Part": "C40877",
+            "Supplier": "LCSC",
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Contributor": "LCEDA_Lib",
+            "spiceSymbolName": "HDR-F-2.54_1x6",
+            "puuid": "e86d43893d914130bd34765c00ed5f63",
+            "uuid": "2f5c8276f8d64010877a8d3bb97697b8"
+          }
+        ],
+        [
+          "Porta Digital",
+          7,
+          "HDR-F-2.54_1X4",
+          "PORTA1,PORTA2,PORTA3,PORTA4,PORTA5,PORTA6,PORTA7",
+          {
+            "Supplier Part": "C225501",
+            "Supplier": "LCSC",
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Contributor": "LCEDA_Lib",
+            "spiceSymbolName": "HDR-F-2.54_1x4",
+            "puuid": "21473b495b6340c992965357d5701779",
+            "uuid": "eaa76950fd7343a1953943ee7b9978d3"
+          }
+        ],
+        [
+          "Porta Analogica",
+          4,
+          "HDR-F-2.54_1X4",
+          "PORTA8,PORTA9,PORTA10,PORTA11",
+          {
+            "Supplier Part": "C225501",
+            "Supplier": "LCSC",
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Contributor": "LCEDA_Lib",
+            "spiceSymbolName": "HDR-F-2.54_1x4",
+            "puuid": "21473b495b6340c992965357d5701779",
+            "uuid": "eaa76950fd7343a1953943ee7b9978d3"
+          }
+        ]
+      ],
+      "updateTime": 1700231602,
+      "createTime": 1693952134,
+      "histories": [],
+      "created_at": "2023-09-05 19:15:34",
+      "updated_at": "2023-11-17 11:33:22"
+    },
+    {
+      "uuid": "21981c53a26722772cec9d288a215e86",
+      "puuid": "e170139f119015dc674ab98ad21902b7",
+      "title": "PCB_plataforma sensores",
+      "filename": "PCB_plataforma sensores.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "fed5720f683e4a9294f3fca4b45ca860": 1,
+        "e86d43893d914130bd34765c00ed5f63": 1,
+        "21473b495b6340c992965357d5701779": 11
+      },
+      "BOM": [],
+      "updateTime": 1700237106,
+      "createTime": 1700231965,
+      "histories": [],
+      "created_at": "2023-11-17 11:39:25",
+      "updated_at": "2023-11-17 13:05:06"
+    }
+  ],
+  "sort": [],
+  "title": "plataforma sensores",
+  "foldername": "plataforma sensores",
+  "schfilename": "plataforma sensores.json",
+  "schfilemtime": 1700231602539
+}

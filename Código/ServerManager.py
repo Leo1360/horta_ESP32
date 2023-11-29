@@ -57,7 +57,7 @@ def updateTime(request):
       resp = "FAIL"
   else:
     from machine import RTC
-    RTC().datetime([data["Y"],data["M"],data["D"],data["h"],data["m"]])
+    RTC().datetime([data["Y"],data["M"],data["D"],data["h"],data["m"],data["s"]])
   try:
     msg = localtime()
   except:
@@ -72,6 +72,15 @@ def init():
   server.add_route("/readsHistory",readsHistory)
   server.add_route("/limparHistorico",limparLeituras)
   server.add_route("/updateTime",updateTime)
+  #/config -              GET: show all configs
+  #/config/telegram -     GET: Return telegram configuration - POST: save telegram configuration
+  #/plugin?plugin=abcd -  ANY: binds request to the plugin described
+  #/plugin/list -         GET: List existing plugins and if they are active or not
+  #/plugin/activate -     POST: activates the discribed plugin
+  #/plugin/deactivate -   POST: deactivate the discribed plugin
+  #/plugin/add -          POST: recives the plugin file and saves it in the "plugins" folder
+  #/plugin/delete -       POST: delete the informed plugin file
+  #/
   _thread.start_new_thread(server.start,[])
 
 server = MicroPyServer()

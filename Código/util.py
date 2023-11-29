@@ -33,9 +33,15 @@ def atualizarTempo():
 def getConfiguration(configName):
   import json
   print("getConfiguration() configName: " + configName)
-  with open("config.json","r") as f:
+  with open("sd/config.json","r") as f:
     configs = f.read()
     print(configs)  
     configuracoes = json.loads(configs)
     print("Pegando configuração " + configName + ":= " + str(configuracoes[configName]))
     return configuracoes[configName]
+
+
+def formatTime(data):
+  #(year, month, mday, hour, minute, second, weekday, yearday)
+  return str(data[2]) + "/" + str(data[1]) + "/" + str(data[0]) + " " + str(data[3]) + ":" + str(data[4]) + ":" + str(data[5])
+

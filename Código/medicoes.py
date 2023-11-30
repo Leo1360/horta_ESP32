@@ -13,10 +13,9 @@ def getReadings():
     return {"dataHora":hora,"medicoes":medicoes}
 
 def streamHistoryToServer(server):
+    from util import streamFile
     with lock:
-        with open("/sd/leituras.json","r") as f:
-            for line in f:
-                server.send(line)
+        streamFile(server, "/sd/leituras.json")
     pass
 
 def clearHistoryFile():

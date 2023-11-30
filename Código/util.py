@@ -1,8 +1,6 @@
-import machine
-import os
-import gc
-
 def connectSDCard():
+  import os
+  import machine
   from sdcard import SDCard
   spisd = machine.SoftSPI(-1,miso=machine.Pin(13),mosi=machine.Pin(12),sck=machine.Pin(14))
   sd = SDCard(spisd,machine.Pin(27))
@@ -11,10 +9,12 @@ def connectSDCard():
   print(os.listdir())
 
 def df():
+  import os
   s = os.statvfs('//')
   return ('{0} MB'.format((s[0]*s[3])/1048576))
 
 def free(full=False):
+  import gc
   F = gc.mem_free()
   A = gc.mem_alloc()
   T = F+A
@@ -45,3 +45,7 @@ def formatTime(data):
   #(year, month, mday, hour, minute, second, weekday, yearday)
   return str(data[2]) + "/" + str(data[1]) + "/" + str(data[0]) + " " + str(data[3]) + ":" + str(data[4]) + ":" + str(data[5])
 
+def streamFile(server,filePath):
+  with open(filePath,"r") as f:
+    for line in f:
+        server.send(line)

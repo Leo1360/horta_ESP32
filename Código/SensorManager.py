@@ -4,10 +4,19 @@
 # lux - luminosidade
 import gc
 
+def loadSensorModRegistry():
+    import json
+    with open("sd/sensorModules/registry.json") as f:
+        return json.loads(f.read())
+
+def getSensorModRegistry():
+    with open("sd/sensorModules/registry.json") as f:
+        return f.read()
+
 def loadSensorRegistry():
     import json
     sensores = {}
-    with open("/sd/sensores.json","r") as f:
+    with open("sd/sensores.json","r") as f:
         temp = f.read()
         try:
             sensores = json.loads(temp)
@@ -50,12 +59,15 @@ def getpin(port):
     return out
 
 def readAllSensor():
+    from PluginManager import callHandler
+    callHandler("befor_readingSession")
     readings = []
     sensores = loadSensorRegistry()
     if(sensores == {}):
         print("No Sensor registerd")
         return {}
     for key in sensores:
+        callHandler("befor_sensorReading")
         mod = None
         print("Reading sensor: ")
         print(sensores[key]["tipo"])
@@ -66,9 +78,11 @@ def readAllSensor():
             print("Sensor driver loaded")
         except:
             print("Sensor driver nor found")
+            callHandler("on_sensorFailedReading",sensores[key])
             continue
         print(mod)
         read, notify = mod.read(getpin(sensores[key]["port"]),sensores[key]["faixas"])
+        callHandler("after_sensorReading",{"read":read,"name":key})
         read = {key:read}
         if(notify):
             from Notification import sendNotification
@@ -76,6 +90,7 @@ def readAllSensor():
         readings.append(read)
         del mod
         gc.collect()
+    callHandler("after_readingSession",readings)
     return readings
 
 def getSensorInfo(sensorName):
@@ -87,12 +102,16 @@ def addSensor(sensor):
         sensor["faixas"]
         if(sensor["nome"] == "" or sensor["tipo"] == "" or sensor["port"] == ""):
             return False
+        tipos = loadSensorModRegistry()
+        sensor["tipo"] = tipos[sensor["tipo"]]["moduleName"]
+        del tipos
         sensores = loadSensorRegistry()
         sensores[sensor["nome"]] = {
             "port":sensor["port"],
             "tipo":sensor["tipo"],
             "faixas":sensor["faixas"]}
         updateSensorRegistry(sensores)
+        gc.collect()
         return True
     except:
             return False
@@ -105,4 +124,3 @@ def removeSensor(sensorName):
         updateSensorRegistry(sensores)
     except:
         pass
-

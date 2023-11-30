@@ -65,6 +65,12 @@ def updateTime(request):
   server.send_response("""{"status":" """ + resp + """ ","msg":" """ + msg + """ "}""",content_type="aplication/json")
   pass
 
+def listSensorMods(request):
+  from SensorManager import getSensorModRegistry
+  server.send("HTTP/1.0 200\r\n")
+  server.send("Content-Type: aplication/json\r\n\r\n")
+  server.send(getSensorModRegistry())
+
 def init():
   server.add_route("/readNow", readNow)
   server.add_route("/addSensor", addSensor,method="POST")
@@ -80,7 +86,10 @@ def init():
   #/plugin/deactivate -   POST: deactivate the discribed plugin
   #/plugin/add -          POST: recives the plugin file and saves it in the "plugins" folder
   #/plugin/delete -       POST: delete the informed plugin file
-  #/
+  #/sensorMod/add -       POST: recives the sensor module file, saves it and register it
+  #/sensorMod/delete -    POST: delete the sensor module file and its register
+  #/sensorMod/list -      GET: list all avaible sensor modules
+  server.add_route("/sensorMod/list",listSensorMods)
   _thread.start_new_thread(server.start,[])
 
 server = MicroPyServer()

@@ -11,3 +11,6 @@ def read(pinos,faixas):
     }
     notify = validarLeitura(faixas,medicao)
     return medicao,notify
+
+def getMedicoes():
+    return ["umd","tmp"]

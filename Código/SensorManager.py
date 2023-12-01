@@ -62,7 +62,7 @@ def readAllSensor():
         modName = sensores[key]["tipo"]
         print(modName)
         try:
-            mod = __import__(modName)
+            mod = __import__("sd/sensorModule/" + modName)
             print("Sensor driver loaded")
         except:
             print("Sensor driver nor found")

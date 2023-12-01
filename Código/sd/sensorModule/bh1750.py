@@ -114,3 +114,23 @@ class BH1750:
             if self._measurement_mode == BH1750.MEASUREMENT_MODE_CONTINUOUSLY:
                 base_measurement_time = 16 if self._measurement_time == BH1750.RESOLUTION_LOW else 120
                 sleep_ms(math.ceil(base_measurement_time * self._measurement_time / BH1750.MEASUREMENT_TIME_DEFAULT))
+
+
+def read(pinos,faixas):
+    from machine import I2C
+
+    i2c0_scl = pinos[0]
+    i2c0_sda = pinos[1]
+    i2c0 = I2C(0, sda=i2c0_sda, scl=i2c0_scl)
+
+    bh1750 = BH1750(0x23, i2c0)
+    temp = bh1750.measurement
+
+    read = {"lux":temp}
+    from Notification import validarLeitura
+    notify = validarLeitura(faixas,read)
+
+    return read, notify
+
+def getMedicoes():
+    return ["lux"]

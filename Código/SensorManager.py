@@ -50,7 +50,7 @@ def getpin(port):
     return out
 
 def readAllSensor():
-    readings = []
+    readings = {}
     sensores = loadSensorRegistry()
     if(sensores == {}):
         print("No Sensor registerd")
@@ -69,11 +69,11 @@ def readAllSensor():
             continue
         print(mod)
         read, notify = mod.read(getpin(sensores[key]["port"]),sensores[key]["faixas"])
-        read = {key:read}
         if(notify):
+            read2 = {key:read}
             from Notification import sendNotification
-            sendNotification(sensores[key],read,key)
-        readings.append(read)
+            sendNotification(sensores[key],read2,key)
+        readings[key] = read
         del mod
         gc.collect()
     return readings

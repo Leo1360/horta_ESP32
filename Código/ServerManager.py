@@ -68,7 +68,7 @@ def updateTime(request):
 def getDashBoard(request):
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: text/html\r\n\r\n")
-  with open("/sd/index.html") as f:
+  with open("/sd/index.html","r") as f:
     for line in f:
       server.send(line)
 
@@ -76,7 +76,7 @@ def init():
   server.add_route("/readNow", readNow)
   server.add_route("/addSensor", addSensor,method="POST")
   server.add_route("/listSensores",listSensores)
-  server.add_route("/readsHistory",readsHistory)
+  server.add_route("/history.json",readsHistory)
   server.add_route("/limparHistorico",limparLeituras)
   server.add_route("/updateTime",updateTime)
   server.on_not_found(getDashBoard)

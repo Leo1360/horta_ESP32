@@ -6442,7 +6442,9 @@ canvas#highlights {
 <br>
 <li><button type="button" class="btn btn-success btn-lg" style="width: 196px;" onclick="updateSensorReadings()">Ler Sensores</button></li>
 <br>
-<li><button type="button" class="btn btn-success btn-lg" style="width: 196px;" onclick="redirec('https://   run.mocky.io/v3/4db1597c-90d1-49e0-b573-1e75b50657dc')">Baixar Leituras</button></li> <!--horta.local/readsHistory-->
+<li><button type="button" class="btn btn-success btn-lg" style="width: 196px;" onclick="redirec('/readsHistory.json')">Baixar Leituras</button></li>
+<br>
+<li><button type="button" class="btn btn-success btn-lg" style="width: 196px;" onclick="clearHistory()">Limpar Leituras</button></li>
 <br>
 <li><button type="button" id="btnCreate" onclick="openCreateModal()" class="btn btn-success btn-lg" style="width: 196px;">Cadastrar Sensor</button></li>
 </ul>
@@ -6622,10 +6624,21 @@ canvas#highlights {
     }
 
     function updateSensorReadings(){
-        // fetch("horta.local/readNow").then((resp) => resp.json()).then(data => console.log(data))
-        sensores = fetch("https://run.mocky.io/v3/4db1597c-90d1-49e0-b573-1e75b50657dc")
-        .then((resp) => resp.json())
-        .then(data => updateDashboardReadings(data));
+        fetch("/readNow")
+        .then(resp => resp.json())
+        //sensores = fetch("https://run.mocky.io/v3/4db1597c-90d1-49e0-b573-1e75b50657dc")
+        .then(data => updateDashboardReadings(data["medicoes"]));
+    }
+
+    function clearHistory(){
+        fetch("/limparHistorico")
+        .then(resp => resp.json())
+        //sensores = fetch("https://run.mocky.io/v3/4db1597c-90d1-49e0-b573-1e75b50657dc")
+        .then(function(data){
+            if(data["status"] == "OK"){
+                alert("Historico limpo com sucesso")
+            }
+        });
     }
 
     function updateDashboardReadings(data){

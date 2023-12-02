@@ -1,5 +1,3 @@
-import json
-from easydate import DateTime
 import _thread
 
 def init():
@@ -8,15 +6,16 @@ def init():
 
 def getReadings():
     from SensorManager import readAllSensor
+    import time
+    from util import formatTime
     medicoes = readAllSensor()
-    hora = str(DateTime.now())
+    hora = formatTime(time.localtime())
     return {"dataHora":hora,"medicoes":medicoes}
 
 def streamHistoryToServer(server):
+    from util import streamFile
     with lock:
-        with open("/sd/leituras.json","r") as f:
-            for line in f:
-                server.send(line)
+        streamFile(server, "/sd/leituras.json")
     pass
 
 def clearHistoryFile():

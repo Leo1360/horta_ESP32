@@ -1,0 +1,22 @@
+{
+    "DHT11":{
+        "moduleName":"DHT11",
+        "leituras":["tmp","umd"]
+    },
+    "DHT22":{
+        "moduleName":"DHT22",
+        "leituras":["tmp","umd"]
+    },
+    "DS18B20":{
+        "moduleName":"DS18B20",
+        "leituras":["tmp"]
+    },
+    "bh1750":{
+        "moduleName":"bh1750",
+        "leituras":["lux"]
+    },
+    "UmidadeSolo":{
+        "moduleName":"UmidadeSolo",
+        "leituras":["umd"]
+    }
+}

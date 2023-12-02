@@ -1,11 +1,11 @@
 from time import sleep
 import util
 from WifiManager import WifiManager
-import ServerManager
-from network import hostname
 import medicoes
 
 def setup():
+  from network import hostname
+  import ServerManager
   print("Disk usage: " + util.df())
   print("Ram usage: " + util.free(True))
   util.connectSDCard()

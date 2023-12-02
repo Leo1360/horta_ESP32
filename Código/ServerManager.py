@@ -57,7 +57,7 @@ def updateTime(request):
       resp = "FAIL"
   else:
     from machine import RTC
-    RTC().datetime([data["Y"],data["M"],data["D"],data["h"],data["m"]])
+    RTC().datetime([data["Y"],data["M"],data["D"],data["h"],data["m"],data["s"]])
   try:
     msg = localtime()
   except:
@@ -65,12 +65,20 @@ def updateTime(request):
   server.send_response("""{"status":" """ + resp + """ ","msg":" """ + msg + """ "}""",content_type="aplication/json")
   pass
 
+<<<<<<< HEAD
 def getDashBoard(request):
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: text/html\r\n\r\n")
   with open("/sd/index.html","r") as f:
     for line in f:
       server.send(line)
+=======
+def listSensorMods(request):
+  from SensorManager import getSensorModRegistry
+  server.send("HTTP/1.0 200\r\n")
+  server.send("Content-Type: aplication/json\r\n\r\n")
+  server.send(getSensorModRegistry())
+>>>>>>> feature/Sistema_de_plgins
 
 def init():
   server.add_route("/readNow", readNow)
@@ -79,7 +87,22 @@ def init():
   server.add_route("/history.json",readsHistory)
   server.add_route("/limparHistorico",limparLeituras)
   server.add_route("/updateTime",updateTime)
+<<<<<<< HEAD
   server.on_not_found(getDashBoard)
+=======
+  #/config -              GET: show all configs
+  #/config/telegram -     GET: Return telegram configuration - POST: save telegram configuration
+  #/plugin?plugin=abcd -  ANY: binds request to the plugin described
+  #/plugin/list -         GET: List existing plugins and if they are active or not
+  #/plugin/activate -     POST: activates the discribed plugin
+  #/plugin/deactivate -   POST: deactivate the discribed plugin
+  #/plugin/add -          POST: recives the plugin file and saves it in the "plugins" folder
+  #/plugin/delete -       POST: delete the informed plugin file
+  #/sensorMod/add -       POST: recives the sensor module file, saves it and register it
+  #/sensorMod/delete -    POST: delete the sensor module file and its register
+  #/sensorMod/list -      GET: list all avaible sensor modules
+  server.add_route("/sensorMod/list",listSensorMods)
+>>>>>>> feature/Sistema_de_plgins
   _thread.start_new_thread(server.start,[])
 
 server = MicroPyServer()

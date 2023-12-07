@@ -33,3 +33,10 @@ def persistReadings(readings):
             f.write(jsonMedidas)
             f.write(",")
 
+def getTrigramsTable():
+  from Registry import load
+  return load("trigrams.json")
+
+def getTrigramsJson():
+  from Registry import getString
+  return getString("trigrams.json")

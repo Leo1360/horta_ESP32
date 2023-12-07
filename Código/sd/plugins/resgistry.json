@@ -1,3 +1,7 @@
-[
-    {"name":"Nome do plugin","isActive":false,"moduleName":"nome do arquivo sem .py","handlers":"after_sensorReading;befor_sensorReading"}
-]
+{
+    "NotifyTelegram":{
+        "isActive":true,
+        "moduleName":"TelegramNotification",
+        "handlers":"befor_sensorReading"
+    }
+}

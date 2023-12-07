@@ -6,7 +6,7 @@ import medicoes
 def setup():
   from network import hostname
   import ServerManager
-  print("Disk usage: " + util.df())
+  print("Free Disk: " + util.df())
   print("Ram usage: " + util.free(True))
   util.connectSDCard()
   hostname("horta")

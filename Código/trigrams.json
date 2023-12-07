@@ -1,0 +1,6 @@
+{
+    "umd":"humidade",
+    "tmp":"temperatura",
+    "ecs":"eletrocondutividade de solo",
+    "lux":"luminosidade"
+}

@@ -1,23 +1,16 @@
-def loadPluginRegistry():
-    import json
-    with open("sd/plugins/registry.json","r") as f:
-        return json.loads(f.read())
-    pass
-
-def savePluginRegistry(registry):
-    import json
-    with open("sd/plugins/registry.json","w") as f:
-        f.write(json.dumps(registry))
+regPath = "sd/plugins/registry.json"
 
 def initializeActivePlugins():
-    regitry = loadPluginRegistry()
-    for plugin in regitry:
-        if(plugin["isActive"]):
-            initializePlugin(plugin["moduleName"])
+    from Registry import load
+    registry = load(regPath)
+    for plugin in registry.keys():
+        if(registry[plugin]["isActive"]):
+            initializePlugin(plugin)
     pass
 
 def initializePlugin(moduleName):
     import gc
+    from loader import loadModule
     mod = __import__("sd/plugins/" + moduleName)
     mod.init()
     del mod
@@ -25,12 +18,37 @@ def initializePlugin(moduleName):
 
 def callHandler(eventName, data):
     import gc
-    from loader import loadModule
-    registry = loadPluginRegistry()
-    for reg in registry:
-        if(eventName in reg["handlers"] and reg["isActive"]):
-            mod = loadModule(reg["moduleName"],"sd/plugins/")
+    from Registry import load
+    registry = load(regPath)
+    for modname in registry.keys():
+        if(eventName in registry[modname]["handlers"] and registry[modname]["isActive"]):
+            mod = __import__("sd/plugins/"+modname["moduleName"])
             mod.handlers[eventName](data)
             del mod
             gc.collect()
     pass
+
+def getJson():
+    from Registry import getString
+    return getString(regPath)
+
+def activatePlugin(pluginName):
+    import Registry
+    reg = Registry.load(regPath)
+    try:
+        reg[pluginName]["isActive"] = True
+        Registry.save(regPath,reg)
+        return True
+    except:
+        return False
+
+def deactivatePlugin(pluginName):
+    import Registry
+    reg = Registry.load(regPath)
+    try:
+        reg[pluginName]["isActive"] = False
+        Registry.save(regPath,reg)
+        return True
+    except:
+        return False
+

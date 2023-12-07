@@ -18,20 +18,24 @@ def sendMsg(token, chat_id, text):
         return False
 
 def sendNotification(data):
-    valor = data["read"]
-    nome = data["name"]
-    from util import getConfiguration
-    print("sendNotification() ")
-    token = getConfiguration("TELEGRAM_TOKEN")
-    chat = getConfiguration("TELEGRAM_CHAT")
-    print("sendNotification() definindo menssagem")
-    msg = "Foi verificado um valor fora da faixa no sensor '" + nome 
-    print(msg)
-    sendMsg(token,chat,msg)
-    pass
+    if(data["outOfRange"]):
+        valor = data["read"]
+        nome = data["name"]
+        from util import getConfiguration
+        from medicoes import getTrigramsTable
+        print("sendNotification() ")
+        token = getConfiguration("TELEGRAM_TOKEN")
+        chat = getConfiguration("TELEGRAM_CHAT")
+        reads = "\n"
+        trigstable = getTrigramsTable()
+        for key in valor.keys():
+            reads += trigstable[key] + ": " + valor[key] + "\n"
+        print("sendNotification() definindo menssagem")
+        msg = "Foi verificado um valor fora da faixa no sensor '" + nome  + reads
+        print(msg)
+        sendMsg(token,chat,msg)
+        pass
 
-
-
-handlers = { # dict with the handlers pointing to it functions
-    "after_sensorReading":sendNotification
-}
+def getHandlers():
+    return { # dict with the handlers pointing to it functions
+        "after_sensorReading":sendNotification}

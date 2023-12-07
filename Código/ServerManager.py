@@ -15,21 +15,20 @@ def addSensor(request):
   from SensorManager import addSensor
   print("/addSensor")
   infos = json.loads(request.split("\r\n\r\n")[1])
-  ret = addSensor(infos)
+  ret, msg = addSensor(infos)
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: aplication/json\r\n\r\n")
   if(ret == True):
     server.send("""{"status":"OK"}""")
   else:
-    server.send("""{"status":"Fail","msg":" """ + ret + """ "}""")
+    server.send("""{"status":"Fail","msg":" """ + msg + """ "}""")
 
 def listSensores(request):
-  from SensorManager import loadSensorRegistry
+  from SensorManager import getSensorListJson
   print("/listSensores")
-  temp = json.dumps(loadSensorRegistry())
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: aplication/json\r\n\r\n")
-  server.send(temp)
+  server.send(getSensorListJson())
 
 def readsHistory(request):
   print("/readsHistory")  
@@ -65,44 +64,84 @@ def updateTime(request):
   server.send_response("""{"status":" """ + resp + """ ","msg":" """ + msg + """ "}""",content_type="aplication/json")
   pass
 
-<<<<<<< HEAD
 def getDashBoard(request):
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: text/html\r\n\r\n")
   with open("/sd/index.html","r") as f:
     for line in f:
       server.send(line)
-=======
-def listSensorMods(request):
-  from SensorManager import getSensorModRegistry
+
+def listSensorMods():
+  from SensorModManager import getJson
   server.send("HTTP/1.0 200\r\n")
   server.send("Content-Type: aplication/json\r\n\r\n")
-  server.send(getSensorModRegistry())
->>>>>>> feature/Sistema_de_plgins
+  server.send(getJson())
+
+def listPlugins():
+  from PluginManager import getJson
+  server.send("HTTP/1.0 200\r\n")
+  server.send("Content-Type: aplication/json\r\n\r\n")
+  server.send(getJson())
+
+def activatePlugin():
+  from PluginManager import activatePlugin
+  server.send("HTTP/1.0 200\r\n")
+  server.send("Content-Type: aplication/json\r\n\r\n")
+  server.send("""{"ok":""" + activatePlugin() +"""}""")
+
+def deactivatePlugin():
+  from PluginManager import deactivatePlugin
+  server.send("HTTP/1.0 200\r\n")
+  server.send("Content-Type: aplication/json\r\n\r\n")
+  server.send("""{"ok":""" + deactivatePlugin() +"""}""")
+
+def getConfigs():
+  server.send("HTTP/1.0 200\r\n")
+  server.send("Content-Type: aplication/json\r\n\r\n")
+  with open("/sd/config.json","r") as f:
+    server.send(f.read())
+
+def saveConfigs(request):
+  with open("/sd/config.json","w") as f:
+    f.write(request.split("\r\n\r\n")[1])
+
+
+def getTrigrams():
+  from medicoes import getTrigramsJson
+  server.send("HTTP/1.0 200\r\n")
+  server.send("Content-Type: aplication/json\r\n\r\n")
+  server.send(getTrigramsJson())
 
 def init():
+  server.on_not_found(getDashBoard)
   server.add_route("/readNow", readNow)
   server.add_route("/addSensor", addSensor,method="POST")
   server.add_route("/listSensores",listSensores)
   server.add_route("/history.json",readsHistory)
   server.add_route("/limparHistorico",limparLeituras)
   server.add_route("/updateTime",updateTime)
-<<<<<<< HEAD
-  server.on_not_found(getDashBoard)
-=======
-  #/config -              GET: show all configs
-  #/config/telegram -     GET: Return telegram configuration - POST: save telegram configuration
-  #/plugin?plugin=abcd -  ANY: binds request to the plugin described
+  
+  #/config -              GET: show all configs - POST: save configuration
+
   #/plugin/list -         GET: List existing plugins and if they are active or not
-  #/plugin/activate -     POST: activates the discribed plugin
-  #/plugin/deactivate -   POST: deactivate the discribed plugin
-  #/plugin/add -          POST: recives the plugin file and saves it in the "plugins" folder
-  #/plugin/delete -       POST: delete the informed plugin file
-  #/sensorMod/add -       POST: recives the sensor module file, saves it and register it
-  #/sensorMod/delete -    POST: delete the sensor module file and its register
+  server.add_route("/plugin/list",listPlugins)
+
   #/sensorMod/list -      GET: list all avaible sensor modules
   server.add_route("/sensorMod/list",listSensorMods)
->>>>>>> feature/Sistema_de_plgins
+
+  #/plugin/activate -     POST: activates the discribed plugin
+  server.add_route("/plugin/activate",activatePlugin)
+  #/plugin/deactivate -   POST: deactivate the discribed plugin
+  server.add_route("/plugin/deactivate",deactivatePlugin)
+
+  server.add_route("/getTrigrams",getTrigrams)
+
+    #* /plugin?plugin=abcd -  ANY: binds request to the plugin described
+    #* /plugin/add -          POST: recives the plugin file and saves it in the "plugins" folder
+    #* /plugin/delete -       POST: delete the informed plugin file
+    #* /sensorMod/add -       POST: recives the sensor module file, saves it and register it
+    #* /sensorMod/delete -    POST: delete the sensor module file and its register
+  
   _thread.start_new_thread(server.start,[])
 
 server = MicroPyServer()

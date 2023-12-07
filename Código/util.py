@@ -11,7 +11,8 @@ def connectSDCard():
 def df():
   import os
   s = os.statvfs('//')
-  return ('{0} MB'.format((s[0]*s[3])/1048576))
+  usoBytes = (s[0]*s[3])
+  return ('{0} MB ({1}%)'.format(usoBytes/1048576,(usoBytes/2097152)*100))
 
 def free(full=False):
   import gc
@@ -39,7 +40,6 @@ def getConfiguration(configName):
     configuracoes = json.loads(configs)
     print("Pegando configuração " + configName + ":= " + str(configuracoes[configName]))
     return configuracoes[configName]
-
 
 def formatTime(data):
   #(year, month, mday, hour, minute, second, weekday, yearday)

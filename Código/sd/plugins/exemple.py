@@ -1,4 +1,4 @@
-"""All plugins are lazy executed, and are only loaded when needed. Your code must not contain code out of functions"""
+"""All plugins are lazy executed, and are only loaded when needed. Your plugin must not contain code out of functions"""
 handlers = { # dict with the handlers pointing to it functions
     "befor_sensorReading":function,
     "after_sensorReading":function,

@@ -1,0 +1,17 @@
+{
+    "DHT11":{
+        "leituras":["tmp","umd"]
+    },
+    "DHT22":{
+        "leituras":["tmp","umd"]
+    },
+    "DS18B20":{
+        "leituras":["tmp"]
+    },
+    "bh1750":{
+        "leituras":["lux"]
+    },
+    "UmidadeSolo":{
+        "leituras":["umd"]
+    }
+}

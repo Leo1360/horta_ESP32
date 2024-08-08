@@ -2,28 +2,7 @@
 # tmp - temperatura
 # ecs - eletrocondutividade de solo
 # lux - luminosidade
-import gc
-
-def loadSensorRegistry():
-    import json
-    sensores = {}
-    with open("/sd/sensores.json","r") as f:
-        temp = f.read()
-        try:
-            sensores = json.loads(temp)
-            print("Registry loaded")
-            print(sensores)
-        except:
-            print("Json to dict conversion failed")
-            sensores = {}
-        print(sensores)
-    return sensores
-
-def updateSensorRegistry(sensores):
-    import json
-    with open("/sd/sensores.json","w") as f:
-        f.write(json.dumps(sensores))
-    pass
+regPath = "sd/sensores.json"
 
 ports = {
     "1" : [15,2],
@@ -50,59 +29,66 @@ def getpin(port):
     return out
 
 def readAllSensor():
-    readings = []
-    sensores = loadSensorRegistry()
+    import gc
+    from PluginManager import callHandler
+    from Registry import load
+    callHandler("befor_readingSession",{})
+    readings = {}
+    sensores = load(regPath)
     if(sensores == {}):
         print("No Sensor registerd")
         return {}
-    for key in sensores:
+    for key in sensores.keys():
+        callHandler("befor_sensorReading",{})
         mod = None
-        print("Reading sensor: ")
-        print(sensores[key]["tipo"])
         modName = sensores[key]["tipo"]
-        print(modName)
         try:
-            mod = __import__(modName)
+            mod = __import__("sd/sensorModules/" + modName)
             print("Sensor driver loaded")
         except:
             print("Sensor driver nor found")
+            callHandler("on_sensorFailedReading",sensores[key])
             continue
         print(mod)
         read, notify = mod.read(getpin(sensores[key]["port"]),sensores[key]["faixas"])
-        read = {key:read}
-        if(notify):
-            from Notification import sendNotification
-            sendNotification(sensores[key],read,key)
-        readings.append(read)
+        callHandler("after_sensorReading",{"read":read,"name":key,"outOfRange":notify})
+        readings[key] = read
         del mod
         gc.collect()
+    callHandler("after_readingSession",readings)
     return readings
 
 def getSensorInfo(sensorName):
-    senosores = loadSensorRegistry()
-    return senosores[sensorName]
+    import Registry
+    return Registry.getElement(regPath,sensorName)
 
 def addSensor(sensor):
+    import gc
+    import Registry
     try: #try para pegar caso o campo n exista
         sensor["faixas"]
         if(sensor["nome"] == "" or sensor["tipo"] == "" or sensor["port"] == ""):
-            return False
-        sensores = loadSensorRegistry()
-        sensores[sensor["nome"]] = {
-            "port":sensor["port"],
-            "tipo":sensor["tipo"],
-            "faixas":sensor["faixas"]}
-        updateSensorRegistry(sensores)
-        return True
+            return False,"Campos de Nome,Tipo ou Port vazios"
     except:
-            return False
-    pass
+        return False, "Todos os campos devem ser preenchidos"
+    tipo = Registry.getElement("sd/sensorModules/registry.json",sensor["tipo"])
+    if(tipo == {}):    
+        return False,"Tipo de sensor não suportado"
+    nome = sensor["nome"]
+    sensor.pop("nome")
+    Registry.addElement(regPath,nome,sensor)
+    gc.collect()
+    return True,"ok"
+    
+def removerSensor(sensorName):
+    from Registry import removeElement
+    removeElement(regPath,sensorName)
 
-def removeSensor(sensorName):
-    sensores = loadSensorRegistry()
-    try:
-        sensores.pop(sensorName)
-        updateSensorRegistry(sensores)
-    except:
-        pass
+def getSensorList():
+    from Registry import load
+    return load(regPath)
+
+def getSensorListJson():
+    from Registry import getString
+    return getString(regPath)
 

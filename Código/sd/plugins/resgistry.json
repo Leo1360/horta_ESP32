@@ -1,0 +1,7 @@
+{
+    "NotifyTelegram":{
+        "isActive":true,
+        "moduleName":"TelegramNotification",
+        "handlers":"befor_sensorReading"
+    }
+}
